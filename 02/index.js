@@ -1,13 +1,6 @@
-var _ = require('lodash');
-var T = require('transduce');
-var t = require('transducers-js');
+var T = require('transducers-js');
 
-
-var log = require('../log'),
-    title = log.title,
-    info = log.info;
-
-var data = [
+var a = [
     { name: 'Яблоки'   , quantity: 2, uuid: '123', flag: true , order: '12345', user: 'Вася', age: 23, arr: [1,2]    },
     { name: 'Бананы'   , quantity: 4, uuid: '124', flag: true , order: '12346', user: 'Вася', age: 20, arr: [3,4]    },
     { name: 'Апельсины', quantity: 2, uuid: '125', flag: false, order: '12347', user: 'Петя', age: 23, arr: [5]      },
@@ -19,39 +12,22 @@ var data = [
     { name: 'Манго'    , quantity: 6, uuid: '130', flag: true , order: '12353', user: 'Вася', age: 23, arr: 11       }
 ];
 
-var res;
+var sum = function (res, value) {
+    return res + value
+};
 
-//// Extend
-//title('transduce.into({}, data)');
-//res = T.into({}, data);
-//info(res);
-//
-//// Copy
-//title('transduce.into([], data)');
-//res = T.into([], data);
-//info(res);
+var max = function (res, value) {
+    return value != null && res > value ? res : value
+};
 
-var xf = _.compose(T.cat, T.tap(function (res, item) {
-    this.i = this.i || 0;
-    title(this.i++);
-    info({
-        result: res,
-        input: item
-    });
-}));
+var doc_xf = merge({
+    name: T.first,
+    quantity: sum
+});
 
-//
-title('transduce_js.into({}, data)');
-res = T.into({}, xf, data);
-info(res);
-
-//
-title('partitionByKeys');
-var keys = require('../utils/keys');
-var partitionByKeys = _.compose(T.partitionBy, keys);
-res = T.into([], partitionByKeys(['name', 'user']), data);
-info(res);
-
-
-
+var items = ['a', 2, 'bc', 34, 1, 'd'];
+switchTransform(_.isNumber, {
+    true: add,
+    false: upperCase
+});
 
